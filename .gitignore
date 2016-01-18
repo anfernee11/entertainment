@@ -1,0 +1,6 @@
+# txt 
+*.txt
+
+#Dstore
+.DS_Store/
+
