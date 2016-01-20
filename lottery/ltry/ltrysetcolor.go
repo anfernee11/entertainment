@@ -4,16 +4,17 @@ package ltry
 //     "fmt"
 // )
 
+//LSetColor Ltrys' set
 type LSetColor struct {
 	Ltrys []*LtryColor
 }
 
-//Pt... Print the LSetCoor
-func (ltrylist *LSetColor) Pt() int {
-	for _, lt := range ltrylist.Ltrys {
+//Pt Print the LSetCoor
+func (lts *LSetColor) Pt() {
+	for _, lt := range lts.Ltrys {
 		lt.Pt()
 	}
-	return 0
+	return
 }
 
 func (lts *LSetColor) Len() int {
@@ -26,15 +27,16 @@ func (lts *LSetColor) Less(i, j int) bool {
 
 func (lts *LSetColor) Swap(i, j int) {
 	lts.Ltrys[i].index, lts.Ltrys[j].index = lts.Ltrys[j].index, lts.Ltrys[i].index
-	for k, _ := range lts.Ltrys[i].a {
+	for k := range lts.Ltrys[i].a {
 		lts.Ltrys[i].a[k], lts.Ltrys[j].a[k] = lts.Ltrys[j].a[k], lts.Ltrys[i].a[k]
 	}
-	for k, _ := range lts.Ltrys[i].b {
+	for k := range lts.Ltrys[i].b {
 		lts.Ltrys[i].b[k], lts.Ltrys[j].b[k] = lts.Ltrys[j].b[k], lts.Ltrys[i].b[k]
 	}
 	return
 }
 
+//Append add a ltry into the set
 func (lts *LSetColor) Append(lt Ltry) bool {
 	switch lt.(type) {
 	case *LtryColor:
@@ -44,9 +46,10 @@ func (lts *LSetColor) Append(lt Ltry) bool {
 		return false
 	}
 
-	return false
+	//return false
 }
 
+//GetLt get one of the Ltry by index
 func (lts *LSetColor) GetLt(i int) (Ltry, bool) {
 
 	// fmt.Printf("i:%d, len:%d\n", i, len(lts.Ltrys))

@@ -1,6 +1,5 @@
-# txt 
+# txt
 *.txt
 
 #Dstore
-.DS_Store/
-
+.DS_Store
