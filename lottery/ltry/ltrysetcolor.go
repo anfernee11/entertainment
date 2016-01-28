@@ -10,11 +10,11 @@ type LSetColor struct {
 }
 
 //Pt Print the LSetCoor
-func (lts *LSetColor) Pt() {
+func (lts *LSetColor) Pt() int {
 	for _, lt := range lts.Ltrys {
 		lt.Pt()
 	}
-	return
+	return 0
 }
 
 func (lts *LSetColor) Len() int {

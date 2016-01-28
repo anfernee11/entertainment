@@ -5,17 +5,40 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
+	"path/filepath"
+	"strconv"
 	// "strings"
-	// "strconv"
 	"entertainment/lottery/ltry"
 	"sort"
 )
 
 func main() {
+
+	fmt.Printf("Curent Path:[%s]\n\n", getCurrPath())
+
 	filename := "./test_data.txt"
 	ltrylst := new(ltry.LSetColor)
 
-	err := gethistoryfromfile(filename, ltrylst)
+	checkBeg := 4000
+	checkEnd := 10000
+	var err error
+
+	argNum := len(os.Args)
+	if argNum >= 3 {
+		checkBeg, err = strconv.Atoi(os.Args[1])
+		if err != nil {
+			fmt.Printf("para err arg1 [%s]\n", os.Args[1])
+			return
+		}
+		checkEnd, err = strconv.Atoi(os.Args[2])
+		if err != nil {
+			fmt.Printf("para err arg2 [%s]\n", os.Args[2])
+			return
+		}
+	}
+
+	err = gethistoryfromfile(filename, ltrylst)
 	if err != nil {
 		fmt.Printf("[%s] read err[%s]\n", filename, err.Error())
 	}
@@ -23,13 +46,42 @@ func main() {
 	sort.Sort(ltrylst)
 	// ltrylst.Pt()
 
-	pValues := checkSets(ltrylst, ltrylst)
-	for k, v := range pValues {
-		fmt.Printf("idx:[%4d], Value:[%7d]\n", k, v-5000000)
+	// pValues := checkSets(ltrylst, ltrylst)
+	// for k, v := range pValues {
+	// 	fmt.Printf("idx:[%4d], Value:[%7d]\n", k, v-5000000)
+	// }
+
+	lt := new(ltry.LtryColor)
+	lt.BeginSelf()
+	totalCount := 0
+
+	for i := 0; i < 100000000; i++ {
+		pv := checkOneLt(lt, ltrylst)
+
+		if pv <= checkEnd && pv >= checkBeg {
+			fmt.Printf("%s, PV is [%d]\n", lt.Str(), pv)
+			totalCount++
+		}
+
+		if !lt.AddSelf() {
+			fmt.Printf("It's scaned all data already!!, Total Count [%d]\n", totalCount)
+			return
+		}
 	}
 
 	return
 
+}
+
+func checkOneLt(lt ltry.Ltry, ltsBase ltry.LSet) (pv int) {
+	for idx2 := 0; idx2 < ltsBase.Len(); idx2++ {
+		ltbase, err2 := ltsBase.GetLt(idx2)
+		if !err2 {
+			continue
+		}
+		pv += lt.CheckM(ltbase)
+	}
+	return
 }
 
 func gethistoryfromfile(filename string, ltrylist ltry.LSet) error {
@@ -84,4 +136,10 @@ func checkSets(lts ltry.LSet, ltsbase ltry.LSet) (pValue []int) {
 	}
 
 	return
+}
+
+func getCurrPath() string {
+	file, _ := exec.LookPath(os.Args[0])
+	path, _ := filepath.Abs(file)
+	return path
 }
